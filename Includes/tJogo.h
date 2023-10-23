@@ -6,9 +6,9 @@
 #include "tPacman.h"
 
 typedef struct{
-    tMapa mapa;
-    tPacman pacman;
-    tFantasma fantasmaB, fantasmaP, fantasmaI, fantasmaC;
+    tMapa* mapa;
+    tPacman* pacman;
+    tFantasma* fantasmaB, fantasmaP, fantasmaI, fantasmaC;
 }tJogo;
 
 tJogo inicializaJogo(char *argv[ ]);

@@ -6,10 +6,11 @@
 
 
 typedef struct{
-    tPosicao posi;
+    tPosicao* posicao;
     COMANDO comando;
     char simbolo;
 }tFantasma;
 
+tFantasma* CriaFantasma(tPosicao* posicao, char simbolo);
 
 #endif

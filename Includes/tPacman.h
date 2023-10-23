@@ -5,6 +5,8 @@
 #include "tMovimento.h"
 #include "tMapa.h"
 
+#define PACMAN >
+
 typedef struct tPacman{
     /* Posição atual do pacman (linha,coluna) */
     tPosicao* posicaoAtual;
