@@ -1,5 +1,5 @@
-#ifndef TJOGO_H_
-#define TJOGO_H_
+#ifndef TJOGO_H
+#define TJOGO_H
 
 #include "tMapa.h"
 #include "tFantasma.h"
@@ -11,5 +11,6 @@ typedef struct{
     tFantasma* fantasmaB, fantasmaP, fantasmaI, fantasmaC;
 }tJogo;
 
-tJogo inicializaJogo(char *argv[ ]);
+tJogo inicializaJogo(const char* caminhoConfig);
+
 #endif
