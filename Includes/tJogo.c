@@ -3,7 +3,6 @@
 tJogo inicializaJogo(const char* caminhoConfig){
     tJogo jogo;
     jogo.mapa=CriaMapa(caminhoConfig);
-    printf("1");
     /*jogo.pacman=CriaPacman(ObtemPosicaoItemMapa(jogo.mapa, PACMAN));
     jogo.fantasmaB=CriaFantasma(ObtemPosicaoItemMapa(jogo.mapa, B), B);
     jogo.fantasmaP=CriaFantasma(ObtemPosicaoItemMapa(jogo.mapa, P), P);

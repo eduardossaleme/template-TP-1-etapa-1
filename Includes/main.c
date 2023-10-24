@@ -1,5 +1,4 @@
-#include <stdio.h>
-#include "tMapa.h"
+#include "tJogo.h"
 
 int main(int argc, char *argv[]){
     
@@ -8,11 +7,7 @@ int main(int argc, char *argv[]){
     return 1;
     }
     
-    printf("ere");
-
-    tMapa* mapa = CriaMapa(argv[1]);
-
-    printf("erere");
+    tJogo jogo= inicializaJogo(argv[1]);
     
     return 0;
 }
