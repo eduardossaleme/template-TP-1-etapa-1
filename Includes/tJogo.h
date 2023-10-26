@@ -5,6 +5,8 @@
 #include "tFantasma.h"
 #include "tPacman.h"
 
+#define PACMAN '>'
+
 typedef struct{
     tMapa* mapa;
     tPacman* pacman;

@@ -20,7 +20,6 @@ tMapa* CriaMapa(const char* caminhoConfig){
     fscanf(pFile, "%d\n", &(mapa->nMaximoMovimentos));
     mapa->grid = (char**) malloc(1 * sizeof(char*));
 
-    printf("TESTE %d", mapa->nMaximoMovimentos);
     while(1)
     {
         printf("\n");
@@ -43,7 +42,6 @@ tMapa* CriaMapa(const char* caminhoConfig){
                 mapa->grid[i] = (char*) realloc(mapa->grid[i], (j+1)*sizeof (char));
                 mapa->grid[i][j] = c;
                 fscanf(pFile, "%c", &c);
-                printf("%c", mapa->grid[i][j]);
                 j++;
             }
 
@@ -52,8 +50,35 @@ tMapa* CriaMapa(const char* caminhoConfig){
     
     mapa->nColunas=j;
     mapa->nLinhas=i;
-    printf("L%d C%d COMIDAS %d\n", mapa->nLinhas, mapa->nColunas, mapa->nFrutasAtual);
     fclose(pFile);
     return mapa;
     
+}
+
+tPosicao* ObtemPosicaoItemMapa(tMapa* mapa, char item){
+    int i=0, j=0;
+    tPosicao* posi = (tPosicao*)malloc(sizeof(tPosicao));
+    posi=NULL;
+    for(i=0;i<mapa->nLinhas;i++){
+        for(j=0;j<mapa->nColunas;j++;){
+            if(mapa->grid[i][j]== item){
+                posi=CriaPosicao(i,j);
+            }
+        }
+    }
+    return posi;
+}
+
+
+
+
+void DesalocaMapa(tMapa* mapa){
+    DesalocaTunel(mapa->tunel);
+    int i;
+    for(i=0;i<mapa->nLinhas;i++){
+        free(mapa->grid[i]);
+    }
+    free(mapa->grid);
+    // DesalocaTunel(mapa->tunel);
+    free(mapa);
 }
