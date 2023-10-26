@@ -1,5 +1,7 @@
 #include "tMapa.h"
 
+#define TUNEL '@'
+
 tMapa* CriaMapa(const char* caminhoConfig){
     char arquivo[1000];
     sprintf(arquivo, "%s/mapa.txt", caminhoConfig);
@@ -22,7 +24,6 @@ tMapa* CriaMapa(const char* caminhoConfig){
 
     while(1)
     {
-        printf("\n");
         if(fscanf(pFile, "%c", &c)== EOF){
             break;
         }
@@ -38,7 +39,6 @@ tMapa* CriaMapa(const char* caminhoConfig){
                 if(c=='*'){
                     mapa->nFrutasAtual++;
                 }
-                // printf("%c", c);
                 mapa->grid[i] = (char*) realloc(mapa->grid[i], (j+1)*sizeof (char));
                 mapa->grid[i][j] = c;
                 fscanf(pFile, "%c", &c);
@@ -50,6 +50,9 @@ tMapa* CriaMapa(const char* caminhoConfig){
     
     mapa->nColunas=j;
     mapa->nLinhas=i;
+
+    mapa->tunel=ObtemTunelMapa(mapa);
+
     fclose(pFile);
     return mapa;
     
@@ -57,10 +60,10 @@ tMapa* CriaMapa(const char* caminhoConfig){
 
 tPosicao* ObtemPosicaoItemMapa(tMapa* mapa, char item){
     int i=0, j=0;
-    tPosicao* posi = (tPosicao*)malloc(sizeof(tPosicao));
+    tPosicao* posi;
     posi=NULL;
     for(i=0;i<mapa->nLinhas;i++){
-        for(j=0;j<mapa->nColunas;j++;){
+        for(j=0;j<mapa->nColunas;j++){
             if(mapa->grid[i][j]== item){
                 posi=CriaPosicao(i,j);
             }
@@ -69,8 +72,40 @@ tPosicao* ObtemPosicaoItemMapa(tMapa* mapa, char item){
     return posi;
 }
 
+tTunel* ObtemTunelMapa(tMapa* mapa){
+    int i1=0, j1=0, i2=0, j2=0, i, j;
+    for(i=0;i<mapa->nLinhas;i++){
+        for(j=0;j<mapa->nColunas;j++){
+            if(mapa->grid[i][j]== TUNEL){
+                if(i1==0){
+                    i1=i;
+                    j1=j;
+                }
+                else{
+                    i2=i;
+                    j2=j;
+                }
+            }
+        }
+    }
+    
+    tTunel* tunel=CriaTunel(i1, j1, i2, j2);
 
+    return tunel;
 
+}
+
+char ObtemItemMapa(tMapa* mapa, tPosicao* posicao){
+    return mapa->grid[ObtemLinhaPosicao(posicao)][ObtemColunaPosicao(posicao)];
+}
+
+int ObtemNumeroLinhasMapa(tMapa* mapa){
+    return mapa->nLinhas;
+}
+
+int ObtemNumeroColunasMapa(tMapa* mapa){
+    return mapa->nColunas;
+}
 
 void DesalocaMapa(tMapa* mapa){
     DesalocaTunel(mapa->tunel);
@@ -79,6 +114,5 @@ void DesalocaMapa(tMapa* mapa){
         free(mapa->grid[i]);
     }
     free(mapa->grid);
-    // DesalocaTunel(mapa->tunel);
     free(mapa);
 }

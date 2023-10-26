@@ -7,7 +7,9 @@ int main(int argc, char *argv[]){
     return 1;
     }
     
-    tJogo jogo= inicializaJogo(argv[1]);
+    tJogo* jogo = inicializaJogo(argv[1]);
+    
+    encerraJogo(jogo);
     
     return 0;
 }

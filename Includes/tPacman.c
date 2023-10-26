@@ -1,11 +1,15 @@
 #include "tPacman.h"
 
 tPacman* CriaPacman(tPosicao* posicao){
-    tPacman* pacman = (tPacman*)calloc(sizeof(tPacman));
+    tPacman* pacman = (tPacman*)calloc(1, sizeof(tPacman));
     pacman->estaVivo=1;
     pacman->posicaoAtual=posicao;
     
     return pacman;
+}
+
+tPosicao* ObtemPosicaoPacman(tPacman* pacman){
+    return pacman->posicaoAtual;
 }
 
 void DesalocaPacman(tPacman* pacman){

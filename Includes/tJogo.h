@@ -13,6 +13,10 @@ typedef struct{
     tFantasma* fantasmaB, fantasmaP, fantasmaI, fantasmaC;
 }tJogo;
 
-tJogo inicializaJogo(const char* caminhoConfig);
+tJogo* inicializaJogo(const char* caminhoConfig);
+
+void arquivoInicializacao(tJogo* jogo);
+
+void encerraJogo(tJogo* jogo);
 
 #endif
