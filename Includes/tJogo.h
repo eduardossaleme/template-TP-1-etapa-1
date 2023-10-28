@@ -10,7 +10,10 @@
 typedef struct{
     tMapa* mapa;
     tPacman* pacman;
-    tFantasma* fantasmaB, fantasmaP, fantasmaI, fantasmaC;
+    tFantasma* fantasmaB;
+    tFantasma* fantasmaP;
+    tFantasma* fantasmaI;
+    tFantasma* fantasmaC;
 }tJogo;
 
 tJogo* inicializaJogo(const char* caminhoConfig);

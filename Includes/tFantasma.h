@@ -13,4 +13,6 @@ typedef struct{
 
 tFantasma* CriaFantasma(tPosicao* posicao, char simbolo);
 
+void DesalocaFantasma(tFantasma* fantasma);
+
 #endif

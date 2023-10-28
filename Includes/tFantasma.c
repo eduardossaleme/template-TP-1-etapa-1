@@ -1,7 +1,7 @@
 #include "tFantasma.h"
 
 tFantasma* CriaFantasma(tPosicao* posicao, char simbolo){
-    tFantasma* fantasma;
+    tFantasma* fantasma = (tFantasma*)malloc(sizeof (tFantasma));
     fantasma->posicao=posicao;
     fantasma->simbolo=simbolo;
     if(fantasma->simbolo=='B') fantasma->comando= MOV_ESQUERDA;
@@ -10,4 +10,9 @@ tFantasma* CriaFantasma(tPosicao* posicao, char simbolo){
     else if (fantasma->simbolo=='C') fantasma->comando= MOV_DIREITA;
 
     return fantasma;
+}
+
+void DesalocaFantasma(tFantasma* fantasma){
+    DesalocaPosicao(fantasma->posicao);
+    free(fantasma);
 }

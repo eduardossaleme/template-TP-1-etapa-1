@@ -1,6 +1,8 @@
 #include "tMapa.h"
 
 #define TUNEL '@'
+#define COMIDA '*'
+#define PAREDE '#'
 
 tMapa* CriaMapa(const char* caminhoConfig){
     char arquivo[1000];
@@ -51,7 +53,24 @@ tMapa* CriaMapa(const char* caminhoConfig){
     mapa->nColunas=j;
     mapa->nLinhas=i;
 
-    mapa->tunel=ObtemTunelMapa(mapa);
+    int i1=0, j1=0, i2=0, j2=0;
+    for(i=0;i<mapa->nLinhas;i++){
+        for(j=0;j<mapa->nColunas;j++){
+            if(mapa->grid[i][j]== TUNEL){
+                if(i1==0){
+                    i1=i;
+                    j1=j;
+                }
+                else{
+                    i2=i;
+                    j2=j;
+                }
+            }
+        }
+    }
+    
+    mapa->tunel = CriaTunel(i1, j1, i2, j2);
+
 
     fclose(pFile);
     return mapa;
@@ -73,26 +92,7 @@ tPosicao* ObtemPosicaoItemMapa(tMapa* mapa, char item){
 }
 
 tTunel* ObtemTunelMapa(tMapa* mapa){
-    int i1=0, j1=0, i2=0, j2=0, i, j;
-    for(i=0;i<mapa->nLinhas;i++){
-        for(j=0;j<mapa->nColunas;j++){
-            if(mapa->grid[i][j]== TUNEL){
-                if(i1==0){
-                    i1=i;
-                    j1=j;
-                }
-                else{
-                    i2=i;
-                    j2=j;
-                }
-            }
-        }
-    }
-    
-    tTunel* tunel=CriaTunel(i1, j1, i2, j2);
-
-    return tunel;
-
+    return mapa->tunel;
 }
 
 char ObtemItemMapa(tMapa* mapa, tPosicao* posicao){
@@ -105,6 +105,57 @@ int ObtemNumeroLinhasMapa(tMapa* mapa){
 
 int ObtemNumeroColunasMapa(tMapa* mapa){
     return mapa->nColunas;
+}
+
+int ObtemQuantidadeFrutasIniciaisMapa(tMapa* mapa){
+    return mapa->nFrutasAtual;
+}
+
+int ObtemNumeroMaximoMovimentosMapa(tMapa* mapa){
+    return mapa->nMaximoMovimentos;
+}
+
+bool EncontrouComidaMapa(tMapa* mapa, tPosicao* posicao){
+    if(mapa->grid[ObtemLinhaPosicao(posicao)][ObtemColunaPosicao(posicao)] == COMIDA){
+        return true;
+    }
+    else return false;
+}
+
+bool EncontrouParedeMapa(tMapa* mapa, tPosicao* posicao){
+    if(mapa->grid[ObtemLinhaPosicao(posicao)][ObtemColunaPosicao(posicao)] == PAREDE){
+        return true;
+    }
+    else return false;
+}
+
+bool AtualizaItemMapa(tMapa* mapa, tPosicao* posicao, char item){
+    if(!(mapa->grid[ObtemLinhaPosicao(posicao)][ObtemColunaPosicao(posicao)])){
+        return false;
+    }
+    else{
+        mapa->grid[ObtemLinhaPosicao(posicao)][ObtemColunaPosicao(posicao)]=item;
+        return true;
+    }
+    
+}
+
+bool PossuiTunelMapa(tMapa* mapa){
+    if(mapa->tunel==NULL){
+        return false;
+    }
+    else return true;
+}
+
+bool AcessouTunelMapa(tMapa* mapa, tPosicao* posicao){
+    if(EntrouTunel(mapa->tunel, posicao)){
+        return true;
+    }
+    else return false;
+}
+
+void EntraTunelMapa(tMapa* mapa, tPosicao* posicao){
+    LevaFinalTunel(mapa->tunel, posicao);
 }
 
 void DesalocaMapa(tMapa* mapa){
