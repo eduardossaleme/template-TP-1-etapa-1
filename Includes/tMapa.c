@@ -80,7 +80,6 @@ tMapa* CriaMapa(const char* caminhoConfig){
 tPosicao* ObtemPosicaoItemMapa(tMapa* mapa, char item){
     int i=0, j=0;
     tPosicao* posi;
-    posi=NULL;
     for(i=0;i<mapa->nLinhas;i++){
         for(j=0;j<mapa->nColunas;j++){
             if(mapa->grid[i][j]== item){

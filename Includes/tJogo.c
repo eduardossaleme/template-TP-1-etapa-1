@@ -12,6 +12,15 @@ tJogo* inicializaJogo(const char* caminhoConfig){
     return jogo;
 }
 
+tJogo* realizaJogo(tJogo* jogo){
+    scanf("%c%*c", &jogo->entrada);
+    jogo->comando=obtemComandoEntrada(jogo->entrada);
+    AtualizaItemMapa(jogo->mapa, ObtemPosicaoPacman(jogo->pacman), ' ');
+    MovePacman(jogo->pacman, jogo->mapa, jogo->comando);
+    imprimeMapa(jogo);
+    return jogo;
+}
+
 void arquivoInicializacao(tJogo* jogo){
     FILE* pFile = fopen("inicializacao.txt", "w");
 
@@ -30,6 +39,27 @@ void arquivoInicializacao(tJogo* jogo){
     fclose(pFile);
  }
 
+ void imprimeMapa(tJogo* jogo){
+    int i=0, j=0;
+    tPosicao* posi;
+    printf("Estado do jogo apos o movimento '%c'\n", jogo->entrada);
+    for(i=0;i<ObtemNumeroLinhasMapa(jogo->mapa);i++){
+        for(j=0;j<ObtemNumeroColunasMapa(jogo->mapa);j++){
+            posi=CriaPosicao(i,j);
+            printf("%c", ObtemItemMapa(jogo->mapa, posi));
+            DesalocaPosicao(posi);
+        }
+        printf("\n");
+    }
+    printf("Pontuação: %d\n", ObtemPontuacaoAtualPacman(jogo->pacman));
+ }
+
+COMANDO obtemComandoEntrada(char entrada){
+    if(entrada =='w') return MOV_CIMA;
+    else if(entrada =='s') return MOV_BAIXO;
+    else if(entrada =='d') return MOV_DIREITA;
+    else if(entrada =='a') return MOV_ESQUERDA;
+}
 
 void encerraJogo(tJogo* jogo){
     DesalocaMapa(jogo->mapa);

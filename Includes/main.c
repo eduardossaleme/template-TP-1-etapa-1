@@ -8,6 +8,11 @@ int main(int argc, char *argv[]){
     }
     
     tJogo* jogo = inicializaJogo(argv[1]);
+
+    int i=0;
+    for(i=0;i<10;i++){
+        jogo=realizaJogo(jogo);
+    }
     
     encerraJogo(jogo);
     
