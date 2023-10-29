@@ -8,7 +8,9 @@ tJogo* inicializaJogo(const char* caminhoConfig){
     jogo->fantasmaP=CriaFantasma(ObtemPosicaoItemMapa(jogo->mapa, 'P'), 'P');
     jogo->fantasmaI=CriaFantasma(ObtemPosicaoItemMapa(jogo->mapa, 'I'), 'I');
     jogo->fantasmaC=CriaFantasma(ObtemPosicaoItemMapa(jogo->mapa, 'C'), 'C');
+    CriaTrilhaPacman(jogo->pacman, ObtemNumeroLinhasMapa(jogo->mapa), ObtemNumeroColunasMapa(jogo->mapa));
     arquivoInicializacao(jogo);
+    AtualizaTrilhaPacman(jogo->pacman);
     return jogo;
 }
 
@@ -17,6 +19,7 @@ tJogo* realizaJogo(tJogo* jogo){
     jogo->comando=obtemComandoEntrada(jogo->entrada);
     AtualizaItemMapa(jogo->mapa, ObtemPosicaoPacman(jogo->pacman), ' ');
     MovePacman(jogo->pacman, jogo->mapa, jogo->comando);
+    AtualizaTrilhaPacman(jogo->pacman);
     imprimeMapa(jogo);
     return jogo;
 }
@@ -62,6 +65,7 @@ COMANDO obtemComandoEntrada(char entrada){
 }
 
 void encerraJogo(tJogo* jogo){
+    SalvaTrilhaPacman(jogo->pacman);
     DesalocaMapa(jogo->mapa);
     DesalocaPacman(jogo->pacman);
     DesalocaFantasma(jogo->fantasmaB);
