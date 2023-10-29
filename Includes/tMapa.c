@@ -159,7 +159,9 @@ void EntraTunelMapa(tMapa* mapa, tPosicao* posicao){
 }
 
 void DesalocaMapa(tMapa* mapa){
-    DesalocaTunel(mapa->tunel);
+    if(PossuiTunelMapa(mapa)){
+        DesalocaTunel(mapa->tunel);
+    }
     int i;
     for(i=0;i<mapa->nLinhas;i++){
         free(mapa->grid[i]);
