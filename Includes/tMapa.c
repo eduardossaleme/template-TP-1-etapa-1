@@ -79,7 +79,7 @@ tMapa* CriaMapa(const char* caminhoConfig){
 
 tPosicao* ObtemPosicaoItemMapa(tMapa* mapa, char item){
     int i=0, j=0;
-    tPosicao* posi;
+    tPosicao* posi = NULL;
     for(i=0;i<mapa->nLinhas;i++){
         for(j=0;j<mapa->nColunas;j++){
             if(mapa->grid[i][j]== item){
@@ -129,7 +129,7 @@ bool EncontrouParedeMapa(tMapa* mapa, tPosicao* posicao){
 }
 
 bool AtualizaItemMapa(tMapa* mapa, tPosicao* posicao, char item){
-    if(!(mapa->grid[ObtemLinhaPosicao(posicao)][ObtemColunaPosicao(posicao)])){
+    if(ObtemColunaPosicao(posicao)>=mapa->nColunas || ObtemLinhaPosicao(posicao)>= mapa->nLinhas|| posicao==NULL){
         return false;
     }
     else{

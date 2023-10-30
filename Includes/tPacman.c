@@ -45,52 +45,53 @@ void MovePacman(tPacman* pacman, tMapa* mapa, COMANDO comando){
     if(comando==MOV_BAIXO){
         pacman->posicaoAtual=CriaPosicao(i+1, j);
         pacman->nMovimentosBaixo++;
-        if(ObtemItemMapa(mapa, pacman->posicaoAtual)== '#'){
+        if(EncontrouParedeMapa(mapa, pacman->posicaoAtual)){
             DesalocaPosicao(pacman->posicaoAtual);
             pacman->posicaoAtual=CriaPosicao(i, j);
             pacman->nColisoesParedeBaixo++;
         }
-        else if(ObtemItemMapa(mapa, pacman->posicaoAtual)== '*'){
+        else if(EncontrouComidaMapa(mapa, pacman->posicaoAtual)){
             pacman->nFrutasComidasBaixo++;
         }
     }
     else if(comando==MOV_CIMA){
         pacman->posicaoAtual=CriaPosicao(i-1, j);
         pacman->nMovimentosCima++;
-        if(ObtemItemMapa(mapa, pacman->posicaoAtual)== '#'){
+        if(EncontrouParedeMapa(mapa, pacman->posicaoAtual)){
             DesalocaPosicao(pacman->posicaoAtual);
             pacman->posicaoAtual=CriaPosicao(i, j);
             pacman->nColisoesParedeCima++;
         }
-        else if(ObtemItemMapa(mapa, pacman->posicaoAtual)== '*'){
+        else if(EncontrouComidaMapa(mapa, pacman->posicaoAtual)){
             pacman->nFrutasComidasCima++;
         }
     }
     else if(comando==MOV_DIREITA){
         pacman->posicaoAtual=CriaPosicao(i, j+1);
         pacman->nMovimentosDireita++;
-        if(ObtemItemMapa(mapa, pacman->posicaoAtual)== '#'){
+        if(EncontrouParedeMapa(mapa, pacman->posicaoAtual)){
             DesalocaPosicao(pacman->posicaoAtual);
             pacman->posicaoAtual=CriaPosicao(i, j);
             pacman->nColisoesParedeDireita++;
         }
-        else if(ObtemItemMapa(mapa, pacman->posicaoAtual)== '*'){
+        else if(EncontrouComidaMapa(mapa, pacman->posicaoAtual)){
             pacman->nFrutasComidasDireita++;
         }
     }
     else if(comando==MOV_ESQUERDA){
         pacman->posicaoAtual=CriaPosicao(i, j-1);
         pacman->nMovimentosEsquerda++;
-        if(ObtemItemMapa(mapa, pacman->posicaoAtual)== '#'){
+        if(EncontrouParedeMapa(mapa, pacman->posicaoAtual)){
             DesalocaPosicao(pacman->posicaoAtual);
             pacman->posicaoAtual=CriaPosicao(i, j);
             pacman->nColisoesParedeEsquerda++;
         }
-        else if(ObtemItemMapa(mapa, pacman->posicaoAtual)== '*'){
+        else if(EncontrouComidaMapa(mapa, pacman->posicaoAtual)){
             pacman->nFrutasComidasEsquerda++;
         }
     }
     AtualizaItemMapa(mapa, pacman->posicaoAtual, '>');
+    AtualizaTrilhaPacman(pacman);
 }
 
 void CriaTrilhaPacman(tPacman* pacman, int nLinhas, int nColunas){
@@ -116,22 +117,22 @@ void SalvaTrilhaPacman(tPacman* pacman){
     int i, j;
     for(i=0;i<pacman->nLinhasTrilha;i++){
         for(j=0;j<pacman->nColunasTrilha;j++){
-            if(pacman->trilha[i][j]==-1){
-                fprintf(pFile, "# ");
+            if(pacman->trilha[i][j]!=-1){
+                fprintf(pFile, "%d ", pacman->trilha[i][j]);
             }
             else{
-                fprintf(pFile, "%d ", pacman->trilha[i][j]);
+                fprintf(pFile, "# ");
             }
         }
         fprintf(pFile,"\n");
-        free(pacman->trilha[i]);
     }
-    free(pacman->trilha);
     fclose(pFile);                        
 }
 
 void InsereNovoMovimentoSignificativoPacman(tPacman* pacman, COMANDO comando, const char* acao){
-    pacman->historicoDeMovimentosSignificativos[pacman->nMovimentosSignificativos]=CriaMovimento(ObtemNumeroAtualMovimentosPacman(pacman), comando, acao);
+    pacman->nMovimentosSignificativos++;
+    pacman->historicoDeMovimentosSignificativos=(tMovimento**)realloc(pacman->historicoDeMovimentosSignificativos, (pacman->nMovimentosSignificativos) * sizeof(tMovimento*));
+    pacman->historicoDeMovimentosSignificativos[pacman->nMovimentosSignificativos-1]=CriaMovimento(ObtemNumeroAtualMovimentosPacman(pacman), comando, acao);
 }
 
 void MataPacman(tPacman* pacman){
@@ -144,8 +145,11 @@ void DesalocaPacman(tPacman* pacman){
     for(i=0;i<pacman->nMovimentosSignificativos;i++){
         DesalocaMovimento(pacman->historicoDeMovimentosSignificativos[i]);
     }
+    for(i=0;i<pacman->nLinhasTrilha;i++){
+        free(pacman->trilha[i]);
+    }
+    free(pacman->trilha);
     free(pacman->historicoDeMovimentosSignificativos);
-
     free(pacman);
 }
 

@@ -1,7 +1,7 @@
 #include "tFantasma.h"
 
 tFantasma* CriaFantasma(tPosicao* posicao, char simbolo){
-    tFantasma* fantasma;
+    tFantasma* fantasma = NULL;
     if(posicao!=NULL){
         fantasma = (tFantasma*)malloc(sizeof (tFantasma));
         fantasma->posicao=posicao;
@@ -15,6 +15,8 @@ tFantasma* CriaFantasma(tPosicao* posicao, char simbolo){
 }
 
 void DesalocaFantasma(tFantasma* fantasma){
-    DesalocaPosicao(fantasma->posicao);
-    free(fantasma);
+    if(fantasma!=NULL){
+        DesalocaPosicao(fantasma->posicao);
+        free(fantasma);
+    }
 }
