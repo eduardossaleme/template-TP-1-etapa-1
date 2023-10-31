@@ -19,6 +19,10 @@ tJogo* realizaJogo(tJogo* jogo){
     jogo->comando=obtemComandoEntrada(jogo->entrada);
     AtualizaItemMapa(jogo->mapa, ObtemPosicaoPacman(jogo->pacman), ' ');
     MovePacman(jogo->pacman, jogo->mapa, jogo->comando);
+    MoveFantasma(jogo->fantasmaB, jogo->mapa);
+    MoveFantasma(jogo->fantasmaP, jogo->mapa);
+    MoveFantasma(jogo->fantasmaI, jogo->mapa);
+    MoveFantasma(jogo->fantasmaC, jogo->mapa);
     AtualizaTrilhaPacman(jogo->pacman);
     imprimeMapa(jogo);
     return jogo;

@@ -3,15 +3,19 @@
 
 #include "tPosicao.h"
 #include "tMovimento.h"
+#include "tMapa.h"
 
 
 typedef struct{
     tPosicao* posicao;
+    tPosicao* posicaoAnterior;
     COMANDO comando;
-    char simbolo;
+    char simbolo, casaAnterior;
 }tFantasma;
 
 tFantasma* CriaFantasma(tPosicao* posicao, char simbolo);
+
+void MoveFantasma(tFantasma* fantasma, tMapa* mapa);
 
 void DesalocaFantasma(tFantasma* fantasma);
 
