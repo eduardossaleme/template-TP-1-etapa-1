@@ -37,8 +37,12 @@ int EstaVivoPacman(tPacman* pacman){
 }
 
 void MovePacman(tPacman* pacman, tMapa* mapa, COMANDO comando){
-    tPosicao* posi;
     int i, j;
+    if(PossuiTunelMapa(mapa)){
+        if(AcessouTunelMapa(mapa, pacman->posicaoAtual)){
+            AtualizaItemMapa(mapa, pacman->posicaoAtual, '@');
+        }
+    }
     i=ObtemLinhaPosicao(pacman->posicaoAtual);
     j=ObtemColunaPosicao(pacman->posicaoAtual);
     DesalocaPosicao(pacman->posicaoAtual);
@@ -49,9 +53,17 @@ void MovePacman(tPacman* pacman, tMapa* mapa, COMANDO comando){
             DesalocaPosicao(pacman->posicaoAtual);
             pacman->posicaoAtual=CriaPosicao(i, j);
             pacman->nColisoesParedeBaixo++;
+            InsereNovoMovimentoSignificativoPacman(pacman, comando, "colidiu com a parede");
         }
         else if(EncontrouComidaMapa(mapa, pacman->posicaoAtual)){
             pacman->nFrutasComidasBaixo++;
+            InsereNovoMovimentoSignificativoPacman(pacman, comando, "pegou comida");
+        }
+        else if(PossuiTunelMapa(mapa)){
+            if(AcessouTunelMapa(mapa, pacman->posicaoAtual)){
+                AtualizaTrilhaPacman(pacman);
+                EntraTunelMapa(mapa, pacman->posicaoAtual);
+            }
         }
     }
     else if(comando==MOV_CIMA){
@@ -61,9 +73,17 @@ void MovePacman(tPacman* pacman, tMapa* mapa, COMANDO comando){
             DesalocaPosicao(pacman->posicaoAtual);
             pacman->posicaoAtual=CriaPosicao(i, j);
             pacman->nColisoesParedeCima++;
+            InsereNovoMovimentoSignificativoPacman(pacman, comando, "colidiu com a parede");
         }
         else if(EncontrouComidaMapa(mapa, pacman->posicaoAtual)){
             pacman->nFrutasComidasCima++;
+            InsereNovoMovimentoSignificativoPacman(pacman, comando, "pegou comida");
+        }
+        else if(PossuiTunelMapa(mapa)){
+            if(AcessouTunelMapa(mapa, pacman->posicaoAtual)){
+                AtualizaTrilhaPacman(pacman);
+                EntraTunelMapa(mapa, pacman->posicaoAtual);
+            }
         }
     }
     else if(comando==MOV_DIREITA){
@@ -73,9 +93,17 @@ void MovePacman(tPacman* pacman, tMapa* mapa, COMANDO comando){
             DesalocaPosicao(pacman->posicaoAtual);
             pacman->posicaoAtual=CriaPosicao(i, j);
             pacman->nColisoesParedeDireita++;
+            InsereNovoMovimentoSignificativoPacman(pacman, comando, "colidiu com a parede");
         }
         else if(EncontrouComidaMapa(mapa, pacman->posicaoAtual)){
             pacman->nFrutasComidasDireita++;
+            InsereNovoMovimentoSignificativoPacman(pacman, comando, "pegou comida");
+        }
+        else if(PossuiTunelMapa(mapa)){
+            if(AcessouTunelMapa(mapa, pacman->posicaoAtual)){
+                AtualizaTrilhaPacman(pacman);
+                EntraTunelMapa(mapa, pacman->posicaoAtual);
+            }
         }
     }
     else if(comando==MOV_ESQUERDA){
@@ -85,9 +113,17 @@ void MovePacman(tPacman* pacman, tMapa* mapa, COMANDO comando){
             DesalocaPosicao(pacman->posicaoAtual);
             pacman->posicaoAtual=CriaPosicao(i, j);
             pacman->nColisoesParedeEsquerda++;
+            InsereNovoMovimentoSignificativoPacman(pacman, comando, "colidiu com a parede");
         }
         else if(EncontrouComidaMapa(mapa, pacman->posicaoAtual)){
             pacman->nFrutasComidasEsquerda++;
+            InsereNovoMovimentoSignificativoPacman(pacman, comando, "pegou comida");
+        }
+        else if(PossuiTunelMapa(mapa)){
+            if(AcessouTunelMapa(mapa, pacman->posicaoAtual)){
+                AtualizaTrilhaPacman(pacman);
+                EntraTunelMapa(mapa, pacman->posicaoAtual);
+            }
         }
     }
     AtualizaItemMapa(mapa, pacman->posicaoAtual, '>');
