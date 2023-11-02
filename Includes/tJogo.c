@@ -58,7 +58,7 @@ bool ContinuaJogo(tJogo* jogo){
     if(!(EstaVivoPacman(jogo->pacman))){
         printf("Game over!\n");
         printf("Pontuacao final: %d\n", ObtemPontuacaoAtualPacman(jogo->pacman));
-        InsereNovoMovimentoSignificativoPacman(jogo->pacman, jogo->comando, "fim de jogo por enconstar em um fantasma");
+        InsereNovoMovimentoSignificativoPacman(jogo->pacman, jogo->comando, "fim de jogo por encostar em um fantasma");
         return false;
     }
     else if(ObtemNumeroAtualMovimentosPacman(jogo->pacman)==ObtemNumeroMaximoMovimentosMapa(jogo->mapa)){
@@ -148,9 +148,77 @@ void ArquivoEstatisticas(tJogo* jogo){
      fclose(pFile);
 }
 
+void MontaRanking(tJogo* jogo){
+    int ranking[4][4]={'w', ObtemNumeroFrutasComidasCimaPacman(jogo->pacman), ObtemNumeroColisoesParedeCimaPacman(jogo->pacman), ObtemNumeroMovimentosCimaPacman(jogo->pacman),
+    's', ObtemNumeroFrutasComidasBaixoPacman(jogo->pacman), ObtemNumeroColisoesParedeBaixoPacman(jogo->pacman), ObtemNumeroMovimentosBaixoPacman(jogo->pacman),
+    'a', ObtemNumeroFrutasComidasEsquerdaPacman(jogo->pacman), ObtemNumeroColisoesParedeEsquerdaPacman(jogo->pacman), ObtemNumeroMovimentosEsquerdaPacman(jogo->pacman),
+    'd', ObtemNumeroFrutasComidasDireitaPacman(jogo->pacman), ObtemNumeroColisoesParedeDireitaPacman(jogo->pacman), ObtemNumeroMovimentosDireitaPacman(jogo->pacman)};
+    int i, j;
+
+    for(i=0;i<=3;i++){//ordenando o ranking na ordem correta
+        for(j=1;j+i<=3;j++){  
+            if(ranking[i][1]<ranking[i+j][1]){
+                TrocaPosicao(ranking, i, j);
+            }
+            else if(ranking[i][1]==ranking[i+j][1] && ranking[i][2]>ranking[i+j][2]){
+                TrocaPosicao(ranking, i, j);
+            }
+            else if(ranking[i][1]==ranking[i+j][1]&& ranking[i][2]==ranking[i+j][2] && ranking[i][3]<ranking[i+j][3]){
+                TrocaPosicao(ranking, i, j);
+            }
+            else if(ranking[i][1]==ranking[i+j][1] && ranking[i][2]==ranking[i+j][2] && ranking[i][3]==ranking[i+j][3]&& ranking[i][0]>ranking[i+j][0]){
+                TrocaPosicao(ranking, i, j);
+            }
+        }
+    }
+    FILE* pFile = fopen("ranking.txt", "w");
+    fprintf(pFile,"%c,%d,%d,%d\n", ranking[0][0], ranking[0][1], ranking[0][2], ranking[0][3]);
+    fprintf(pFile,"%c,%d,%d,%d\n", ranking[1][0], ranking[1][1], ranking[1][2], ranking[1][3]);
+    fprintf(pFile,"%c,%d,%d,%d\n", ranking[2][0], ranking[2][1], ranking[2][2], ranking[2][3]);
+    fprintf(pFile,"%c,%d,%d,%d\n", ranking[3][0], ranking[3][1], ranking[3][2], ranking[3][3]);
+    fclose(pFile);
+}
+
+void MontaResumo(tJogo* jogo){
+    tMovimento** resumo = ClonaHistoricoDeMovimentosSignificativosPacman(jogo->pacman);
+    FILE* pFile = fopen("resumo.txt", "w");
+    int i=0;
+    for(i=0;i<ObtemNumeroMovimentosSignificativosPacman(jogo->pacman);i++){
+        fprintf(pFile,"Movimento %d (%c) %s\n", resumo[i]->numeroDoMovimento, ObtemLetraComando(resumo[i]->comando), resumo[i]->acao);
+        DesalocaMovimento(resumo[i]);
+    }
+    free(resumo);
+    fclose(pFile);
+}
+
+char ObtemLetraComando(COMANDO comando){
+    if(comando == MOV_CIMA) return 'w';
+    else if(comando == MOV_BAIXO) return 's';
+    else if(comando == MOV_DIREITA) return 'd';
+    else if(comando == MOV_ESQUERDA) return 'a';
+}
+
+void TrocaPosicao(int ranking[4][4], int i, int j){
+    int aux0, aux1, aux2, aux3;
+    aux0=ranking[i][0];
+    aux1=ranking[i][1];
+    aux2=ranking[i][2];
+    aux3=ranking[i][3];
+    ranking[i][0]=ranking[i+j][0];
+    ranking[i][1]=ranking[i+j][1];
+    ranking[i][2]=ranking[i+j][2];
+    ranking[i][3]=ranking[i+j][3];
+    ranking[i+j][0]=aux0;
+    ranking[i+j][1]=aux1;
+    ranking[i+j][2]=aux2;
+    ranking[i+j][3]=aux3; 
+}
+
 void EncerraJogo(tJogo* jogo){
     SalvaTrilhaPacman(jogo->pacman);
     ArquivoEstatisticas(jogo);
+    MontaRanking(jogo);
+    MontaResumo(jogo);
     DesalocaMapa(jogo->mapa);
     DesalocaPacman(jogo->pacman);
     DesalocaFantasma(jogo->fantasmaB);

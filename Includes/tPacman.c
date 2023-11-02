@@ -18,9 +18,8 @@ tMovimento** ClonaHistoricoDeMovimentosSignificativosPacman(tPacman* pacman){
     int i;
     tMovimento* aux;
     
-    tMovimento** clone= (tMovimento**)malloc(1 * sizeof(tMovimento*));
+    tMovimento** clone= (tMovimento**)malloc((pacman->nMovimentosSignificativos) * sizeof(tMovimento*));
     for(i=0;i<pacman->nMovimentosSignificativos;i++){
-        clone= (tMovimento**)realloc(clone, (i+1) * sizeof(tMovimento*));
         aux=pacman->historicoDeMovimentosSignificativos[i];
         clone[i]=CriaMovimento(ObtemNumeroMovimento(aux), ObtemComandoMovimento(aux), ObtemAcaoMovimento(aux));
     }

@@ -35,6 +35,14 @@ bool VerificaSeBateuPacmanFantasmas(tJogo* jogo);
 
 void ArquivoEstatisticas(tJogo* jogo);
 
+void MontaRanking(tJogo* jogo);
+
+void TrocaPosicao(int ranking[4][4], int i, int j);
+
+void MontaResumo(tJogo* jogo);
+
+char ObtemLetraComando(COMANDO comando);
+
 void EncerraJogo(tJogo* jogo);
 
 #endif

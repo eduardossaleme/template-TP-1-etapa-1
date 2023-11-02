@@ -7,4 +7,4 @@ geraos:
 	gcc -c *.c
 
 clean:
-	rm -rf *.o main
+	rm -rf *.o *.txt main
