@@ -10,6 +10,7 @@
 typedef struct{
     tMapa* mapa;
     tPacman* pacman;
+    tPacman* pacmanAnterior; 
     tFantasma* fantasmaB;
     tFantasma* fantasmaP;
     tFantasma* fantasmaI;
@@ -18,16 +19,22 @@ typedef struct{
     COMANDO comando;
 }tJogo;
 
-tJogo* inicializaJogo(const char* caminhoConfig);
+tJogo* InicializaJogo(const char* caminhoConfig);
 
-tJogo* realizaJogo(tJogo* jogo);
+void RealizaJogo(tJogo* jogo);
 
-void arquivoInicializacao(tJogo* jogo);
+bool ContinuaJogo(tJogo* jogo);
 
-void imprimeMapa(tJogo* jogo);
+void ArquivoInicializacao(tJogo* jogo);
 
-COMANDO obtemComandoEntrada(char entrada);
+void ImprimeMapa(tJogo* jogo);
 
-void encerraJogo(tJogo* jogo);
+COMANDO ObtemComandoEntrada(char entrada);
+
+bool VerificaSeBateuPacmanFantasmas(tJogo* jogo);
+
+void ArquivoEstatisticas(tJogo* jogo);
+
+void EncerraJogo(tJogo* jogo);
 
 #endif

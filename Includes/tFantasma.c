@@ -27,41 +27,66 @@ void MoveFantasma(tFantasma* fantasma, tMapa* mapa){
         fantasma->posicao=CriaPosicao(i+1, j);
         if(EncontrouParedeMapa(mapa, fantasma->posicao)){
             DesalocaPosicao(fantasma->posicao);
-            fantasma->posicao=CriaPosicao(i, j);
+            fantasma->posicao=CriaPosicao(i-1, j);
             fantasma->comando=MOV_CIMA;
-            MoveFantasma(fantasma, mapa);
         }
     }
     else if(fantasma->comando==MOV_CIMA){
         fantasma->posicao=CriaPosicao(i-1, j);
         if(EncontrouParedeMapa(mapa, fantasma->posicao)){
             DesalocaPosicao(fantasma->posicao);
-            fantasma->posicao=CriaPosicao(i, j);
+            fantasma->posicao=CriaPosicao(i+1, j);
             fantasma->comando=MOV_BAIXO;
-            MoveFantasma(fantasma, mapa);
         }
     }
     else if(fantasma->comando==MOV_DIREITA){
         fantasma->posicao=CriaPosicao(i, j+1);
         if(EncontrouParedeMapa(mapa, fantasma->posicao)){
             DesalocaPosicao(fantasma->posicao);
-            fantasma->posicao=CriaPosicao(i, j);
+            fantasma->posicao=CriaPosicao(i, j-1);
             fantasma->comando=MOV_ESQUERDA;
-            MoveFantasma(fantasma, mapa);
         }
     }
     else if(fantasma->comando==MOV_ESQUERDA){
         fantasma->posicao=CriaPosicao(i, j-1);
         if(EncontrouParedeMapa(mapa, fantasma->posicao)){
             DesalocaPosicao(fantasma->posicao);
-            fantasma->posicao=CriaPosicao(i, j);
+            fantasma->posicao=CriaPosicao(i, j+1);
             fantasma->comando=MOV_DIREITA;
-            MoveFantasma(fantasma, mapa);
         }
     }
-    DesalocaPosicao(fantasma->posicaoAnterior);
     fantasma->casaAnterior=ObtemItemMapa(mapa, fantasma->posicao);
+}
+
+void AtualizaFantasmaMapa(tFantasma* fantasma, tMapa* mapa){
+    if (fantasma==NULL) return;
     AtualizaItemMapa(mapa, fantasma->posicao, fantasma->simbolo);
+}
+
+bool BateuFantasma(tFantasma* fantasma, tPosicao* posi){
+    if(fantasma==NULL) return false;
+
+    if(SaoIguaisPosicao(fantasma->posicao, posi)){
+        return true;
+    }
+    else return false;
+}
+
+bool CruzouFantasma(tFantasma* fantasma, tPosicao* posiPac, tPosicao* pacAnt, tMapa* mapa){
+    if(fantasma==NULL) return false;
+    
+    if(SaoIguaisPosicao(fantasma->posicaoAnterior, posiPac) && SaoIguaisPosicao(fantasma->posicao, pacAnt)){
+        AtualizaItemMapa(mapa, posiPac, ' ');
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+
+void LiberaPosicaoAnteriorFantasma(tFantasma* fantasma){
+    if(fantasma==NULL) return;
+    DesalocaPosicao(fantasma->posicaoAnterior);
 }
 
 void DesalocaFantasma(tFantasma* fantasma){

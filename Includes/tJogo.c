@@ -1,6 +1,6 @@
 #include "tJogo.h"
 
-tJogo* inicializaJogo(const char* caminhoConfig){
+tJogo* InicializaJogo(const char* caminhoConfig){
     tJogo* jogo = (tJogo*)malloc(sizeof(tJogo));
     jogo->mapa=CriaMapa(caminhoConfig);
     jogo->pacman=CriaPacman(ObtemPosicaoItemMapa(jogo->mapa, PACMAN));
@@ -9,26 +9,72 @@ tJogo* inicializaJogo(const char* caminhoConfig){
     jogo->fantasmaI=CriaFantasma(ObtemPosicaoItemMapa(jogo->mapa, 'I'), 'I');
     jogo->fantasmaC=CriaFantasma(ObtemPosicaoItemMapa(jogo->mapa, 'C'), 'C');
     CriaTrilhaPacman(jogo->pacman, ObtemNumeroLinhasMapa(jogo->mapa), ObtemNumeroColunasMapa(jogo->mapa));
-    arquivoInicializacao(jogo);
+    ArquivoInicializacao(jogo);
     AtualizaTrilhaPacman(jogo->pacman);
     return jogo;
 }
 
-tJogo* realizaJogo(tJogo* jogo){
+void RealizaJogo(tJogo* jogo){
     scanf("%c%*c", &jogo->entrada);
-    jogo->comando=obtemComandoEntrada(jogo->entrada);
+    jogo->comando=ObtemComandoEntrada(jogo->entrada);
+    jogo->pacmanAnterior=ClonaPacman(jogo->pacman);
+
     AtualizaItemMapa(jogo->mapa, ObtemPosicaoPacman(jogo->pacman), ' ');
-    MovePacman(jogo->pacman, jogo->mapa, jogo->comando);
+
     MoveFantasma(jogo->fantasmaB, jogo->mapa);
     MoveFantasma(jogo->fantasmaP, jogo->mapa);
     MoveFantasma(jogo->fantasmaI, jogo->mapa);
     MoveFantasma(jogo->fantasmaC, jogo->mapa);
-    AtualizaTrilhaPacman(jogo->pacman);
-    imprimeMapa(jogo);
-    return jogo;
+
+    MovePacman(jogo->pacman, jogo->mapa, jogo->comando);
+    if(PossuiTunelMapa(jogo->mapa)){
+        tTunel* tunel=ObtemTunelMapa(jogo->mapa);
+        AtualizaItemMapa(jogo->mapa, tunel->acesso1 , '@');
+        AtualizaItemMapa(jogo->mapa, tunel->acesso2 , '@');
+    }
+    AtualizaItemMapa(jogo->mapa, ObtemPosicaoPacman(jogo->pacman), '>');
+
+    AtualizaFantasmaMapa(jogo->fantasmaB, jogo->mapa);
+    AtualizaFantasmaMapa(jogo->fantasmaP, jogo->mapa);
+    AtualizaFantasmaMapa(jogo->fantasmaI, jogo->mapa);
+    AtualizaFantasmaMapa(jogo->fantasmaC, jogo->mapa);
+
+    if(VerificaSeBateuPacmanFantasmas(jogo)){
+        MataPacman(jogo->pacman);
+    }
+    
+    LiberaPosicaoAnteriorFantasma(jogo->fantasmaB);
+    LiberaPosicaoAnteriorFantasma(jogo->fantasmaP);
+    LiberaPosicaoAnteriorFantasma(jogo->fantasmaI);
+    LiberaPosicaoAnteriorFantasma(jogo->fantasmaC);
+
+    DesalocaPosicao(ObtemPosicaoPacman(jogo->pacmanAnterior));
+    free(jogo->pacmanAnterior);
+
+    ImprimeMapa(jogo);
 }
 
-void arquivoInicializacao(tJogo* jogo){
+bool ContinuaJogo(tJogo* jogo){
+    if(!(EstaVivoPacman(jogo->pacman))){
+        printf("Game over!\n");
+        printf("Pontuacao final: %d\n", ObtemPontuacaoAtualPacman(jogo->pacman));
+        InsereNovoMovimentoSignificativoPacman(jogo->pacman, jogo->comando, "fim de jogo por enconstar em um fantasma");
+        return false;
+    }
+    else if(ObtemNumeroAtualMovimentosPacman(jogo->pacman)==ObtemNumeroMaximoMovimentosMapa(jogo->mapa)){
+        printf("Game over!\n");
+        printf("Pontuacao final: %d\n", ObtemPontuacaoAtualPacman(jogo->pacman));
+        return false;
+    }
+    else if(ObtemPontuacaoAtualPacman(jogo->pacman) == ObtemQuantidadeFrutasIniciaisMapa(jogo->mapa)){
+        printf("Voce venceu!\n");
+        printf("Pontuacao final: %d\n", ObtemPontuacaoAtualPacman(jogo->pacman));
+        return false;
+    }
+    else return true;
+}
+
+void ArquivoInicializacao(tJogo* jogo){
     FILE* pFile = fopen("inicializacao.txt", "w");
 
     int i=0, j=0;
@@ -46,10 +92,10 @@ void arquivoInicializacao(tJogo* jogo){
     fclose(pFile);
  }
 
- void imprimeMapa(tJogo* jogo){
+ void ImprimeMapa(tJogo* jogo){
     int i=0, j=0;
     tPosicao* posi;
-    printf("Estado do jogo apos o movimento '%c'\n", jogo->entrada);
+    printf("Estado do jogo apos o movimento '%c':\n", jogo->entrada);
     for(i=0;i<ObtemNumeroLinhasMapa(jogo->mapa);i++){
         for(j=0;j<ObtemNumeroColunasMapa(jogo->mapa);j++){
             posi=CriaPosicao(i,j);
@@ -58,18 +104,53 @@ void arquivoInicializacao(tJogo* jogo){
         }
         printf("\n");
     }
-    printf("Pontuação: %d\n", ObtemPontuacaoAtualPacman(jogo->pacman));
+    printf("Pontuacao: %d\n\n", ObtemPontuacaoAtualPacman(jogo->pacman));
  }
 
-COMANDO obtemComandoEntrada(char entrada){
+COMANDO ObtemComandoEntrada(char entrada){
     if(entrada =='w') return MOV_CIMA;
     else if(entrada =='s') return MOV_BAIXO;
     else if(entrada =='d') return MOV_DIREITA;
     else if(entrada =='a') return MOV_ESQUERDA;
 }
 
-void encerraJogo(tJogo* jogo){
+bool VerificaSeBateuPacmanFantasmas(tJogo* jogo){
+    if(BateuFantasma(jogo->fantasmaB, ObtemPosicaoPacman(jogo->pacman)) || 
+            CruzouFantasma(jogo->fantasmaB, ObtemPosicaoPacman(jogo->pacman), ObtemPosicaoPacman(jogo->pacmanAnterior), jogo->mapa)){
+        return true;
+    }
+    else if(BateuFantasma(jogo->fantasmaP, ObtemPosicaoPacman(jogo->pacman)) || 
+            CruzouFantasma(jogo->fantasmaP, ObtemPosicaoPacman(jogo->pacman), ObtemPosicaoPacman(jogo->pacmanAnterior), jogo->mapa)){
+        return true;
+    }
+    else if(BateuFantasma(jogo->fantasmaI, ObtemPosicaoPacman(jogo->pacman)) || 
+            CruzouFantasma(jogo->fantasmaI, ObtemPosicaoPacman(jogo->pacman), ObtemPosicaoPacman(jogo->pacmanAnterior), jogo->mapa)){
+        return true;
+    }
+    else if(BateuFantasma(jogo->fantasmaC, ObtemPosicaoPacman(jogo->pacman)) || 
+            CruzouFantasma(jogo->fantasmaC, ObtemPosicaoPacman(jogo->pacman), ObtemPosicaoPacman(jogo->pacmanAnterior), jogo->mapa)){
+        return true;
+    }
+    else return false;
+}
+
+void ArquivoEstatisticas(tJogo* jogo){
+     FILE* pFile = fopen("estatisticas.txt", "w");
+     
+     fprintf(pFile,"Numero de movimentos: %d\n", ObtemNumeroAtualMovimentosPacman(jogo->pacman));
+     fprintf(pFile,"Numero de movimentos sem pontuar: %d\n", ObtemNumeroMovimentosSemPontuarPacman(jogo->pacman));
+     fprintf(pFile,"Numero de colisoes com parede: %d\n", ObtemNumeroColisoesParedePacman(jogo->pacman));
+     fprintf(pFile,"Numero de movimentos para baixo: %d\n", ObtemNumeroMovimentosBaixoPacman(jogo->pacman));
+     fprintf(pFile,"Numero de movimentos para cima: %d\n", ObtemNumeroMovimentosCimaPacman(jogo->pacman));
+     fprintf(pFile,"Numero de movimentos para esquerda: %d\n", ObtemNumeroMovimentosEsquerdaPacman(jogo->pacman));
+     fprintf(pFile,"Numero de movimentos para direita: %d\n", ObtemNumeroMovimentosDireitaPacman(jogo->pacman));
+
+     fclose(pFile);
+}
+
+void EncerraJogo(tJogo* jogo){
     SalvaTrilhaPacman(jogo->pacman);
+    ArquivoEstatisticas(jogo);
     DesalocaMapa(jogo->mapa);
     DesalocaPacman(jogo->pacman);
     DesalocaFantasma(jogo->fantasmaB);

@@ -7,14 +7,13 @@ int main(int argc, char *argv[]){
     return 1;
     }
     
-    tJogo* jogo = inicializaJogo(argv[1]);
+    tJogo* jogo = InicializaJogo(argv[1]);
 
-    int i=0;
-    for(i=0;i<30;i++){
-        jogo=realizaJogo(jogo);
+    while(ContinuaJogo(jogo)){
+        RealizaJogo(jogo);
     }
     
-    encerraJogo(jogo);
+    EncerraJogo(jogo);
     
     return 0;
 }
